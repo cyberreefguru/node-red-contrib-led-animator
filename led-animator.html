@@ -1,0 +1,971 @@
+<script type="text/javascript">
+    RED.nodes.registerType('led-animator',{
+        category: 'function',
+        color: '#ed8cd8',
+        defaults: {
+        	name: {value:""},
+        	command: {value:"0x01"},
+        	notifyOnComplete: {value:false, required: true},
+        	relay: {value:false, required: true},
+        	relaynodes: {value:""},
+        	showv: {value:false, required: true},
+            index: {value:"0",validate:RED.validators.number()},
+            pattern: {value:"0",validate:RED.validators.number()},
+            patternLength: {value:"1"},
+            //patternLength: {value:"1",validate:RED.validators.number()},
+        	duration: {value:"0",validate:RED.validators.number()},
+            repeat: {value:"0",validate:RED.validators.number()},
+            direction: {value:"0",validate:RED.validators.number()},
+            direction2: {value:"0",validate:RED.validators.number()},
+            fadeBy: {value:"1",validate:RED.validators.number()},
+            probability: {value:"0",validate:RED.validators.number()},
+            clearAfter: {value:false},
+            clearEnd: {value:false},
+            onColor: {value:"0xf3f3f3",validate:RED.validators.number()},
+            offColor: {value:"0x000000",validate:RED.validators.number()},
+            onTime: {value:"250",validate:RED.validators.number()},
+            offTime: {value:"250",validate:RED.validators.number()},
+            bounceTime: {value:"250",validate:RED.validators.number()},
+            fadeTime: {value:"250",validate:RED.validators.number()},
+            fadeIncrement: {value:"25",validate:RED.validators.number()},
+            fps: {value:"120",validate:RED.validators.number()},
+            hueUpdateTime: {value:"20",validate:RED.validators.number()},
+            intensity: {value:"200",validate:RED.validators.number()}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "light.png",
+        label: function() {
+            return this.name||"led-animator";
+        },
+        oneditprepare: function() {
+        	
+			/**
+			 * Set the form elements on the UI based on command selected.
+			 * Also changes name of node based on command.
+			 */
+        	function setUi(cmd)
+        	{
+        		var n = "UNKNOWN";
+
+        		// TODO: hide all and only show necessary
+        		
+            	switch(cmd)
+            	{
+            	case 0x01:
+                	//void fill(CRGB color, uint8_t show);
+                	n = "Fill";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+  	            	$( "#notify-details" ).show();
+  	            	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x02:
+                	//void fillPattern(uint8_t pattern, CRGB onColor, CRGB offColor);
+                	n = "Fill Pattern";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+  	            	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).show();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x03:
+                	//void setPixel(uint8_t index, uint32_t color, uint8_t show)
+                	n = "Set Pixel";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+  	            	$( "#relay-details" ).show();
+                	$( "#show-details" ).show();
+                	$( "#index-details" ).show();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x04:
+                	//void show()
+                	n = "Show";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+  	            	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x11:
+            	    //rotatePattern(uint16_t repeat, uint8_t pattern, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime);
+                	n = "Rotate";
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0" selected>Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" >Right</option>');
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0">Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" selected>Right</option>');
+               		}
+                	
+                	$( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+  	            	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).show();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();                	
+           			break;
+            	case 0x12:
+                	//void scrollPattern(uint8_t pattern, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime, uint8_t clearAfter, uint8_t clearEnd);
+                	n = "Scroll";
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0" selected>Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" >Right</option>');
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0">Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" selected>Right</option>');
+               		}
+                	
+                	$( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+  	            	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#pattern-details" ).show();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).show();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x13:
+                	//void bounce(uint8_t pattern, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime, uint32_t bounceTime, uint8_t clearAfter, uint8_t clearEnd);
+                	n = "Bounce";
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0" selected>Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" >Right</option>');
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0">Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" selected>Right</option>');
+               		}
+                	
+                	$( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).show();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).show();
+                	$( "#color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).show();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x14:
+                	//void middle(uint8_t direction, CRGB color1, CRGB color2, uint32_t onTime, uint32_t offTime, uint8_t clearAfter, uint8_t clearEnd);
+                	n = "Middle";
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option value="0" selected>Outside In</option>') ;
+                    	$( "#node-input-direction" ).append('<option value="1">Inside Out</option>') ;
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option value="0">Outside In</option>') ;
+                    	$( "#node-input-direction" ).append('<option value="1" selected>Inside Out</option>') ;
+               		}
+                	
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).show();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x15:
+                	//void randomFlash(uint32_t onTime, uint32_t offTime, CRGB onColor, CRGB offColor);
+                	n = "Random Flash";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x16:
+                    //void fade(uint8_t direction, uint8_t fadeIncrement, uint32_t fadeTime, CRGB color);
+                	n = "Fade";
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option value="0" selected>Down</option>') ;
+                    	$( "#node-input-direction" ).append('<option value="1">Up</option>') ;
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option value="0">Down</option>') ;
+                    	$( "#node-input-direction" ).append('<option value="1" selected>Up</option>') ;
+               		}
+                	
+                	$( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).show();
+                    $( "#fade-increment-details" ).show();
+            		break;
+            	case 0x17:
+                	//void strobe(uint32_t duration, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime);
+                	n = "Strobe";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x18:
+                	//void lightning(CRGB onColor, CRGB offColor);
+                	n = "Lightning";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x19:
+            	    // stack(uint16_t repeat, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime);
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option value="0" selected>Down</option>') ;
+                    	$( "#node-input-direction" ).append('<option value="1">Up</option>') ;
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option value="0">Down</option>') ;
+                    	$( "#node-input-direction" ).append('<option value="1" selected>Up</option>') ;
+               		}
+                	n = "Stack";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).show();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+           			break;
+
+            	case 0x1A:
+            	    // fillRandom(uint16_t repeat, CRGB onColor, CRGB offColor, uint32_t onTime);
+                	n = "Random Fill";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).show();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+                    break;
+            	case 0x1B:
+            	    // wipe(uint16_t repeat, uint32_t duration, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime, uint8_t clearAfter, uint8_t clearEnd);
+					var v = $( "#node-input-direction" ).val();
+                	$( "#node-input-direction" ).empty();
+                	if(v == 0 )
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0" selected>Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" >Right</option>');
+               		}
+                	else if(v == 1)
+               		{
+                    	$( "#node-input-direction" ).append('<option name="left" value="0">Left</option>');
+                    	$( "#node-input-direction" ).append('<option name="right" value="1" selected>Right</option>');
+               		}
+                	
+                	n = "Wipe";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).show();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).show();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).show();
+                    $( "#on-time-details" ).show();
+                    $( "#off-time-details" ).show();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+                    break;
+           	case 0x20:
+                	//void rainbow(uint32_t runTime, uint8_t glitterProbability, CRGB glitterColor)
+                	n = "Rainbow";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).show();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();            	
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x21:
+                	//void rainbowFade();
+                	n = "Fading Rainbow";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x22:
+                	//void confetti(CRGB color, uint8_t FadeBy);
+                	n = "Confetti";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).show();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x23:
+                	//void cylon(CRGB color);
+                	n = "Cylon";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).show();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).show();
+                	$( "#on-color-details" ).show();
+                	$( "#off-color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).show();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x24:
+                	//void bpm();
+                	n = "Beats Per Minute";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x25:
+                	//void juggle();
+                	n = "Juggle";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).show();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x30:
+                	//void setFramesPerSecond(uint8_t fps)
+                	n = "FPS";
+		            $( "#fps-details" ).show();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x31:
+                	//void setHueUpdateTime(uint8_t updateTime)
+                	n = "Hue Time";                	
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).show();
+		            $( "#intensity-details" ).hide();
+                	$( "#notify-details" ).hide();
+                	$( "#relay-details" ).hide();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	case 0x32:
+                	//void setIntensity(uint8_t i)
+                	n = "Intensity";
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#intensity-details" ).show();
+                	$( "#notify-details" ).show();
+                	$( "#relay-details" ).show();
+                	$( "#show-details" ).hide();
+                	$( "#index-details" ).hide();
+                	$( "#pattern-details" ).hide();
+                	$( "#duration-details" ).hide();
+                	$( "#repeat-details" ).hide();
+                	$( "#direction-details" ).hide();
+                    $( "#fade-by-details" ).hide();
+                	$( "#probability-details" ).hide();
+                	$( "#clear-details" ).hide();
+                	$( "#color-details" ).hide();
+                    $( "#on-time-details" ).hide();
+                    $( "#off-time-details" ).hide();
+                    $( "#bounce-time-details" ).hide();
+                    $( "#fade-time-details" ).hide();
+                    $( "#fade-increment-details" ).hide();
+            		break;
+            	default:
+                	n = "ERROR - "+cmd;
+            		break;
+            	} // end switch(cmd)
+
+            	$( "#node-input-name" ).val ( n );
+            	
+        	}; // end setUi
+        	
+        	
+			// Set screen size and lcoation        	
+    		$('#dialog').dialog({
+    	        width: 600,
+    	        title: 'Edit Command Properties',
+    	        position: { my: "center top", at: "center top+25", of: window }
+    	    });
+        	
+        	// Set form lnf
+            $( "#node-input-repeat" ).spinner({min:0});
+            $( "#node-input-fadeBy" ).spinner({min:1,max:255});
+            $( "#node-input-onTime" ).spinner({min:1});
+            $( "#node-input-offTime" ).spinner({min:1});
+            $( "#node-input-bounceTime" ).spinner({min:1});
+            $( "#node-input-fadeTime" ).spinner({min:1});
+            $( "#node-input-probability" ).spinner({min:0});
+            $( "#node-input-fadeIncrement" ).spinner({min:1});
+            $( "#node-input-fps" ).spinner({min:1});
+            $( "#node-input-hueUpdateTime" ).spinner({min:1});
+            $( "#node-input-intensity" ).spinner({min:0});
+            $( "#node-input-index" ).spinner({min:0,max:255});
+            $( "#node-input-patternLength" ).spinner({min:1,max:8});
+
+            // Show command details
+            $( "#command-details" ).show();
+
+            // Show relay details if checked
+            if( $( "#node-input-relay" ).is(':checked') )
+           	{
+            	$( "#relay-node-details" ).show();
+        	}
+           	else
+           	{
+ 	            	$( "#relay-node-details" ).hide();
+          	}
+            
+            // Set function for when relay is checked/unchecked
+            $("#node-input-relay").on("click",function() {
+            	if( this.checked == true ) {
+  	            	$( "#relay-node-details" ).show();
+           		}
+            	else {
+  	            	$( "#relay-node-details" ).hide();
+           		}
+            });
+
+            // onChange event for command
+            $("#node-input-command").on("change",function() {
+            	
+            	var cmd = parseInt(this.value);
+            	setUi( cmd );
+            });
+        }
+        
+    });
+</script>
+
+<script type="text/x-red" data-template-name="led-animator">
+
+    <div id="name-details" class="form-row">
+        <label for="node-input-name"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Name</label>
+        <input type="text" id="node-input-name" placeholder="Name" style="width:200px">
+    </div>
+    <div id="command-details" class="form-row">
+        <label for="node-input-command"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Command</label>
+        <select id="node-input-command" style="width:200px !important">
+            <optgroup label="Command">
+              <option name="show" 			value="0x04">Show</option>
+              <option name="setPixel" 		value="0x03">Set Pixel</option>
+              <option name="fill" 			value="0x01">Fill</option>
+              <option name="fill_pattern" 	value="0x02">Fill Pattern</option>
+              <option name="pattern" 		value="0x11">Rotate Pattern</option>
+              <option name="wipe" 			value="0x12">Scroll Pattern</option>
+              <option name="bounce" 		value="0x13">Bounce Pattern</option>
+              <option name="middle" 		value="0x14">Middle</option>
+              <option name="random" 		value="0x15">Random Flash</option>
+              <option name="fade" 			value="0x16">Fade</option>
+              <option name="strobe" 		value="0x17">Strobe</option>
+              <option name="lightning" 		value="0x18">Lightning</option>
+              <option name="stack" 			value="0x19">Stack</option>
+              <option name="randomfill" 	value="0x1A">Random Fill</option>
+              <option name="wipe" 			value="0x1B">Wipe</option>
+              <option name="rainbow" 		value="0x20">Rainbow</option>
+              <option name="rainbow_fade" 	value="0x21">Fading Rainbow</option>
+              <option name="confetti" 		value="0x22">Confetti</option>
+              <option name="cylon" 			value="0x23">Cylon</option>
+              <option name="bpm" 			value="0x24">Beats</option>
+              <option name="juggle" 		value="0x25">Juggle</option>
+              <option name="fps" 			value="0x30">Frames Per Second</option>
+              <option name="hueupdateTime" 	value="0x31">Hue Update Time</option>
+              <option name="intensity"		value="0x32">Intensity</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div id="direction-details" class="form-row">
+        <label for="node-input-direction"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Direction</label>
+        <select id="node-input-direction" style="width:100px !important">
+            <optgroup label="Direction">
+              <option name="left" value="0">Left</option>
+              <option name="right" value="1">Right</option>
+            </optgroup>
+        </select>
+    </div>
+
+    <div id="notify-details" class="form-row">
+        <label for="node-input-notifyOnComplete" style="width:175px; display: inline-block;"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Notify When Complete?</label>
+        <input type="checkbox" id="node-input-notifyOnComplete" value="noc" style="width:100px !important">
+    </div>
+
+    <div id="relay-details" class="form-row">
+      <div id="relay-on-details" style="display: inline-block">
+          <label for="node-input-relay" style="width:135px; display: inline-block;"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Relay Command?</label>
+          <input type="checkbox" id="node-input-relay" value="r" style="width:25px">
+      </div>
+      <div id="relay-node-details" style="display: inline-block; padding-left: 25px">
+          <label for="node-input-relaynodes" style="width:105px; display: inline-block;"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Relay Nodes: </label>
+          <input type="text" id="node-input-relaynodes" value="1" style="width:100px !important">
+      </div>
+	</div>
+
+    <div id="show-details" class="form-row">
+        <label for="node-input-showv"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Show?</label>
+        <input type="checkbox" id="node-input-showv" value="showv" style="width:100px !important">
+    </div>
+
+    <div id="fps-details" class="form-row">
+        <label for="node-input-fps"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>FPS</label>
+        <input type="text" id="node-input-fps" placeholder="FPS" style="width:100px !important">
+    </div>
+    <div id="hueUpdateTime-details" class="form-row">
+        <label for="node-input-hueUpdateTime"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Hue Update Time</label>
+        <input type="text" id="node-input-hueUpdateTime" placeholder="Hue Update Time" style="width:100px !important">
+    </div>
+    <div id="intensity-details" class="form-row">
+        <label for="node-input-intensity"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Intensity</label>
+        <input type="text" id="node-input-intensity" placeholder="Intensity" style="width:100px !important">
+    </div>
+    <div id="index-details" class="form-row">
+        <label for="node-input-index"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Index</label>
+        <input type="text" id="node-input-index" placeholder="Index" style="width:100px !important">
+    </div>
+    <div id="pattern-details" class="form-row">
+        <label for="node-input-pattern" style="width:75px; display: inline-block;"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Pattern</label>
+        <input type="text" id="node-input-pattern" placeholder="Pattern" style="width:100px !important">
+        <label for="node-input-patternLength" style="padding-left: 20px;width:70px; display: inline-block;"><i class="icon-tag" style="padding-right: 5px; display: inline-block;"></i>Length</label>
+        <input type="text" id="node-input-patternLength" placeholder="1" style="width:50px !important">
+    </div>
+    <div id="repeat-details" class="form-row">
+        <label for="node-input-repeat"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Repeat</label>
+        <input type="text" id="node-input-repeat" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="duration-details" class="form-row">
+        <label for="node-input-duration"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Duration</label>
+        <input type="text" id="node-input-duration" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="fade-by-details" class="form-row">
+        <label for="node-input-fadeBy"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Fade By</label>
+        <input type="text" id="node-input-fadeBy" placeholder="1" style="width:100px !important">
+    </div>
+    <div id="probability-details" class="form-row">
+        <label for="node-input-probability"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Probability</label>
+        <input type="text" id="node-input-probability" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="clear-details" class="form-row">
+        <label for="node-input-clearAfter" style="width:105px; display: inline-block;"><i class="icon-tag" style="padding-right: 5px; display: inline-block;"></i>Clear After?</label>
+        <input type="checkbox" id="node-input-clearAfter" value="ca" style="width:30px; padding-bottom: 10px">
+        <label for="node-input-clearEnd" style="width:115px; padding-left: 15px; display: inline-block;"><i class="icon-tag" style="padding-right: 5px; display: inline-block;"></i>Clear at End?</label>
+        <input type="checkbox" id="node-input-clearEnd" value="ce" style="width:30px;">
+    </div>
+
+    <div id="color-details" class="form-row" >
+      <div id="on-color-details" style="display: inline-block">
+          <label for="node-input-onColor" style="width:90px; display: inline-block;"><i class="icon-tag" style="padding-right: 5px; display: inline-block;"></i>On Color</label>
+          <input type="text" id="node-input-onColor" placeholder="0" style="width:75px; font-family: monospace">
+      </div>
+      <div id="off-color-details" style="display: inline-block; padding-left: 15px;">
+          <label for="node-input-offColor" style="width:90px; display: inline-block;"><i class="icon-tag" style="padding-right: 5px; display: inline-block;"></i>Off Color</label>
+          <input type="text" id="node-input-offColor" placeholder="0" style="width:75px; font-family: monospace">
+      </div>
+    </div>
+
+    <div id="on-time-details" class="form-row">
+        <label for="node-input-onTime" style="width:135px; display: inline-block;"><i class="fa fa-clock-o" style="padding-right:5px; display: inline-block;"></i>On Time (ms)</label>
+        <input type="text" id="node-input-onTime" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="off-time-details" class="form-row">
+        <label for="node-input-offTime" style="width:135px; display: inline-block;"><i class="fa fa-clock-o" style="padding-right:5px; display: inline-block;"></i>Off Time (ms)</label>
+        <input type="text" id="node-input-offTime" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="bounce-time-details" class="form-row">
+        <label for="node-input-bounceTime" style="width:135px; display: inline-block;"><i class="fa fa-clock-o" style="padding-right:5px; display: inline-block;"></i>Bounce Time (ms)</label>
+        <input type="text" id="node-input-bounceTime" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="fade-time-details" class="form-row">
+        <label for="node-input-fadeTime" style="width:135px; display: inline-block;"><i class="fa fa-clock-o" style="padding-right:5px; display: inline-block;"></i>Fade Time (ms)</label>
+        <input type="text" id="node-input-fadeTime" placeholder="0" style="width:100px !important">
+    </div>
+    <div id="fade-increment-details" class="form-row">
+        <label for="node-input-fadeIncrement" style="width:135px; display: inline-block;"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Fade Increment</label>
+        <input type="text" id="node-input-fadeIncrement" placeholder="1" style="width:100px !important">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="led-animator">
+    <p>Generates JSON object for sending animation commands</p>
+</script>
