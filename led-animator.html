@@ -534,8 +534,8 @@
            	case 0x20:
                 	//void rainbow(uint32_t runTime, uint8_t glitterProbability, CRGB glitterColor)
                 	n = "Rainbow";
-		            $( "#fps-details" ).show();
-		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).show();
 		            $( "#intensity-details" ).hide();
                 	$( "#notify-details" ).hide();
                 	$( "#relay-details" ).hide();
@@ -551,7 +551,7 @@
                 	$( "#color-details" ).show();            	
                 	$( "#on-color-details" ).show();
                 	$( "#off-color-details" ).hide();
-                    $( "#on-time-details" ).hide();
+                    $( "#on-time-details" ).show();
                     $( "#off-time-details" ).hide();
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
@@ -560,7 +560,7 @@
             	case 0x21:
                 	//void rainbowFade();
                 	n = "Fading Rainbow";
-		            $( "#fps-details" ).show();
+		            $( "#fps-details" ).hide();
 		            $( "#hueUpdateTime-details" ).hide();
 		            $( "#intensity-details" ).hide();
                 	$( "#notify-details" ).hide();
@@ -575,7 +575,7 @@
                 	$( "#probability-details" ).hide();
                 	$( "#clear-details" ).hide();
                 	$( "#color-details" ).hide();
-                    $( "#on-time-details" ).hide();
+                    $( "#on-time-details" ).show();
                     $( "#off-time-details" ).hide();
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
@@ -584,8 +584,8 @@
             	case 0x22:
                 	//void confetti(CRGB color, uint8_t FadeBy);
                 	n = "Confetti";
-		            $( "#fps-details" ).show();
-		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).show();
 		            $( "#intensity-details" ).hide();
                 	$( "#notify-details" ).hide();
                 	$( "#relay-details" ).hide();
@@ -601,7 +601,7 @@
                 	$( "#color-details" ).show();
                 	$( "#on-color-details" ).show();
                 	$( "#off-color-details" ).hide();
-                    $( "#on-time-details" ).hide();
+                    $( "#on-time-details" ).show();
                     $( "#off-time-details" ).hide();
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
@@ -611,7 +611,7 @@
                 	//void cylon(CRGB color);
                 	n = "Cylon";
 		            $( "#fps-details" ).show();
-		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#hueUpdateTime-details" ).show();
 		            $( "#intensity-details" ).hide();
                 	$( "#notify-details" ).hide();
                 	$( "#relay-details" ).hide();
@@ -636,8 +636,8 @@
             	case 0x24:
                 	//void bpm();
                 	n = "Beats Per Minute";
-		            $( "#fps-details" ).show();
-		            $( "#hueUpdateTime-details" ).hide();
+		            $( "#fps-details" ).hide();
+		            $( "#hueUpdateTime-details" ).show();
 		            $( "#intensity-details" ).hide();
                 	$( "#notify-details" ).hide();
                 	$( "#relay-details" ).hide();
@@ -651,7 +651,7 @@
                 	$( "#probability-details" ).hide();
                 	$( "#clear-details" ).hide();
                 	$( "#color-details" ).hide();
-                    $( "#on-time-details" ).hide();
+                    $( "#on-time-details" ).show();
                     $( "#off-time-details" ).hide();
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
@@ -660,7 +660,7 @@
             	case 0x25:
                 	//void juggle();
                 	n = "Juggle";
-		            $( "#fps-details" ).show();
+		            $( "#fps-details" ).hide();
 		            $( "#hueUpdateTime-details" ).hide();
 		            $( "#intensity-details" ).hide();
                 	$( "#notify-details" ).hide();
@@ -675,7 +675,7 @@
                 	$( "#probability-details" ).hide();
                 	$( "#clear-details" ).hide();
                 	$( "#color-details" ).hide();
-                    $( "#on-time-details" ).hide();
+                    $( "#on-time-details" ).show();
                     $( "#off-time-details" ).hide();
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
@@ -829,6 +829,7 @@
         <label for="node-input-command"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Command</label>
         <select id="node-input-command" style="width:200px !important">
             <optgroup label="Command">
+              <option name="intensity"		value="0x32">Intensity</option>
               <option name="show" 			value="0x04">Show</option>
               <option name="setPixel" 		value="0x03">Set Pixel</option>
               <option name="fill" 			value="0x01">Fill</option>
@@ -850,9 +851,6 @@
               <option name="cylon" 			value="0x23">Cylon</option>
               <option name="bpm" 			value="0x24">Beats</option>
               <option name="juggle" 		value="0x25">Juggle</option>
-              <option name="fps" 			value="0x30">Frames Per Second</option>
-              <option name="hueupdateTime" 	value="0x31">Hue Update Time</option>
-              <option name="intensity"		value="0x32">Intensity</option>
             </optgroup>
         </select>
     </div>
