@@ -30,7 +30,8 @@
             fadeIncrement: {value:"25",validate:RED.validators.number()},
             fps: {value:"120",validate:RED.validators.number()},
             hueUpdateTime: {value:"20",validate:RED.validators.number()},
-            intensity: {value:"200",validate:RED.validators.number()}
+            intensity: {value:"200",validate:RED.validators.number()},
+            number: {value:"4"}
         },
         inputs:1,
         outputs:1,
@@ -77,6 +78,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x02:
                 	//void fillPattern(uint8_t pattern, CRGB onColor, CRGB offColor);
@@ -103,6 +105,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x03:
                 	//void setPixel(uint8_t index, uint32_t color, uint8_t show)
@@ -129,6 +132,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x04:
                 	//void show()
@@ -153,6 +157,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x11:
             	    //rotatePattern(uint16_t repeat, uint8_t pattern, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime);
@@ -192,6 +197,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();                	
+                    $( "#number-details" ).hide();
            			break;
             	case 0x12:
                 	//void scrollPattern(uint8_t pattern, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime, uint8_t clearAfter, uint8_t clearEnd);
@@ -232,6 +238,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x13:
                 	//void bounce(uint8_t pattern, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime, uint32_t bounceTime, uint8_t clearAfter, uint8_t clearEnd);
@@ -269,6 +276,7 @@
                     $( "#bounce-time-details" ).show();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x14:
                 	//void middle(uint8_t direction, CRGB color1, CRGB color2, uint32_t onTime, uint32_t offTime, uint8_t clearAfter, uint8_t clearEnd);
@@ -308,6 +316,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x15:
                 	//void randomFlash(uint32_t onTime, uint32_t offTime, CRGB onColor, CRGB offColor);
@@ -334,6 +343,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).show();
             		break;
             	case 0x16:
                     //void fade(uint8_t direction, uint8_t fadeIncrement, uint32_t fadeTime, CRGB color);
@@ -374,6 +384,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).show();
                     $( "#fade-increment-details" ).show();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x17:
                 	//void strobe(uint32_t duration, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime);
@@ -400,6 +411,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x18:
                 	//void lightning(CRGB onColor, CRGB offColor);
@@ -426,6 +438,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x19:
             	    // stack(uint16_t repeat, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime);
@@ -464,8 +477,8 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
            			break;
-
             	case 0x1A:
             	    // fillRandom(uint16_t repeat, CRGB onColor, CRGB offColor, uint32_t onTime);
                 	n = "Random Fill";
@@ -491,6 +504,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
                     break;
             	case 0x1B:
             	    // wipe(uint16_t repeat, uint32_t duration, uint8_t direction, CRGB onColor, CRGB offColor, uint32_t onTime, uint32_t offTime, uint8_t clearAfter, uint8_t clearEnd);
@@ -530,6 +544,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
                     break;
            	case 0x20:
                 	//void rainbow(uint32_t runTime, uint8_t glitterProbability, CRGB glitterColor)
@@ -556,6 +571,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x21:
                 	//void rainbowFade();
@@ -580,6 +596,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x22:
                 	//void confetti(CRGB color, uint8_t FadeBy);
@@ -606,6 +623,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x23:
                 	//void cylon(CRGB color);
@@ -632,6 +650,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).show();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x24:
                 	//void bpm();
@@ -656,6 +675,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x25:
                 	//void juggle();
@@ -680,6 +700,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x30:
                 	//void setFramesPerSecond(uint8_t fps)
@@ -704,6 +725,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x31:
                 	//void setHueUpdateTime(uint8_t updateTime)
@@ -728,6 +750,7 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	case 0x32:
                 	//void setIntensity(uint8_t i)
@@ -752,13 +775,17 @@
                     $( "#bounce-time-details" ).hide();
                     $( "#fade-time-details" ).hide();
                     $( "#fade-increment-details" ).hide();
+                    $( "#number-details" ).hide();
             		break;
             	default:
                 	n = "ERROR - "+cmd;
             		break;
             	} // end switch(cmd)
 
-            	$( "#node-input-name" ).val ( n );
+            	if( $( "#node-input-name" ).val() == "" || $( "#node-input-name" ).val() == "led-animator" )
+            	{
+            		$( "#node-input-name" ).val ( n );
+             	}
             	
         	}; // end setUi
         	
@@ -784,6 +811,7 @@
             $( "#node-input-intensity" ).spinner({min:0});
             $( "#node-input-index" ).spinner({min:0,max:255});
             $( "#node-input-patternLength" ).spinner({min:1,max:8});
+            $( "#node-input-number" ).spinner({min:1,max:255});
 
             // Show command details
             $( "#command-details" ).show();
@@ -940,6 +968,10 @@
           <label for="node-input-offColor" style="width:90px; display: inline-block;"><i class="icon-tag" style="padding-right: 5px; display: inline-block;"></i>Off Color</label>
           <input type="text" id="node-input-offColor" placeholder="0" style="width:75px; font-family: monospace">
       </div>
+    </div>
+    <div id="number-details" class="form-row">
+        <label for="node-input-number"><i class="icon-tag" style="padding-right:5px; display: inline-block;"></i>Number On</label>
+        <input type="text" id="node-input-number" placeholder="Number On" style="width:100px !important">
     </div>
 
     <div id="on-time-details" class="form-row">

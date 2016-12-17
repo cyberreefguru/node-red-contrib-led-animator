@@ -157,6 +157,11 @@ module.exports = function(RED) {
 	            msg.payload += ',"i":';
 	            msg.payload += parseInt(n.intensity);
             }
+            if( isNumeric(n.number) )
+            {
+	            msg.payload += ',"n":';
+	            msg.payload += parseInt(n.number);
+            }
             
             // body complete
             msg.payload += '}';
